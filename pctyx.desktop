@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PCtyx Editor
+GenericName=Semi-Cytus Simulator Project
+Exec=/opt/pctyx/PCtyxEditor %f
+Categories=Multimedia
+Terminal=false
+
