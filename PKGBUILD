@@ -11,6 +11,10 @@ license=("MIT")
 provides=('pctyx')
 conflicts=('pctyx')
 
+_pkgfile="pctyxeditor_${pkgver}_linux64"
+_pkgexec="PCtyxEditor"
+
+options=(!strip)
 makedepends=('unzip')
 
 sha256sums=(
@@ -21,17 +25,24 @@ sha256sums=(
 
 source=(
     "pctyx.desktop" 
-    "https://github.com/XionUzuki/PCtyx/releases/download/v${pkgver}.${pkgrel}/pctyxeditor_${pkgver}_linux64.zip"
+    "https://github.com/XionUzuki/PCtyx/releases/download/v${pkgver}.${pkgrel}/${_pkgfile}.zip"
     "https://raw.githubusercontent.com/XionUzuki/PCtyx/master/LICENSE"
 )
 
+noextract=("$_pkgfile.zip")
+
 prepare() {
-    mv "${srcdir}/pctyxeditor_${pkgver}_linux64" "${srcdir}/${_pkgname}"
-    cd "${srcdir}/${_pkgname}"
+    cd "$srcdir"
+    mkdir -p $_pkgname
+    bsdtar -x -f "$_pkgfile.zip" -C "$_pkgname" -s '|[^/]*/||'
+    chmod +x "${_pkgname}/${_pkgexec}"
 }
 
 package() {
-    install -dm755 "${pkgdir}/opt/${_pkgname}"
-    install -dm755 "${pkgdir}/usr/share/licenses/${_pkgname}"
-
+    cd "${srcdir}"
+    install -dm755 "${pkgdir}/opt"
+    cp -a --reflink=auto $_pkgname "${pkgdir}/opt/${_pkgname}"
+    install -Dm664 -t "${pkgdir}/usr/share/licenses/${_pkgname}/" "LICENSE"
+    install -Dm644 -t "${pkgdir}/usr/share/applications/" "${_pkgname}.desktop"
 }
+
